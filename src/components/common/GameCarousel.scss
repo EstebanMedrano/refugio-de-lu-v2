@@ -1,0 +1,80 @@
+.carousel-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 700px;
+  margin: 2rem auto;
+  overflow: hidden;
+}
+
+.carousel-viewport {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 350px;
+  position: relative;
+}
+
+.carousel-card {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  border-radius: 24px;
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  width: 220px;
+  transition: all 0.3s ease;
+
+  h3 {
+    margin-top: 1rem;
+    color: #f8fafc;
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
+
+  p {
+    color: rgba(248, 250, 252, 0.7);
+    font-size: 0.9rem;
+  }
+
+  &.center {
+    width: 260px;
+    padding: 2.5rem;
+    border-color: rgba(139, 92, 246, 0.3);
+    box-shadow: 0 0 30px rgba(139, 92, 246, 0.2);
+  }
+}
+
+.carousel-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 3rem;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  z-index: 10;
+  backdrop-filter: blur(10px);
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+
+  &:hover {
+    background: rgba(139, 92, 246, 0.3);
+    border-color: rgba(139, 92, 246, 0.5);
+  }
+
+  &-left { left: 10px; }
+  &-right { right: 10px; }
+}

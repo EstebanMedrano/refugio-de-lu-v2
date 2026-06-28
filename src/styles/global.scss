@@ -1,13 +1,351 @@
-@use 'variables' as *;
-@use 'mixins' as *;
+// =============================================
+// VARIABLES DEL TEMA OSCURO
+// =============================================
+$color-deep-calm: #0f172a;
+$color-ocean: #1e3a8a;
+$color-mint: #10b981;
+$color-lavender: #8b5cf6;
+$color-peach: #f59e0b;
+$color-cloud: #f8fafc;
+$color-mist: #e2e8f0;
 
-* {
+$color-primary: $color-ocean;
+$color-secondary: $color-lavender;
+$color-accent: $color-mint;
+$color-highlight: $color-peach;
+
+$color-bg-primary: $color-deep-calm;
+$color-bg-secondary: #1e293b;
+$color-surface: rgba(255, 255, 255, 0.05);
+$color-surface-hover: rgba(255, 255, 255, 0.1);
+$color-glass: rgba(255, 255, 255, 0.08);
+
+$color-text-primary: $color-cloud;
+$color-text-secondary: rgba(248, 250, 252, 0.8);
+$color-text-muted: rgba(248, 250, 252, 0.5);
+
+$blur-glass: 12px;
+$shadow-colored: 0 20px 40px rgba(139, 92, 246, 0.15), 0 8px 20px rgba(16, 185, 129, 0.1);
+$shadow-glow: 0 0 30px rgba(139, 92, 246, 0.3);
+
+$space-1: 4px; $space-2: 8px; $space-3: 12px;
+$space-4: 16px; $space-5: 20px; $space-6: 24px;
+$space-7: 32px; $space-8: 40px; $space-9: 48px; $space-10: 64px;
+
+$border-radius-sm: 12px; $border-radius-md: 20px;
+$border-radius-lg: 32px; $border-radius-xl: 48px;
+$border-radius-round: 50%; $border-radius-pill: 9999px;
+
+$transition-slow: 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+$transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+$transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+
+$font-family-base: 'Inter', sans-serif;
+$font-size-xs: 0.75rem; $font-size-sm: 0.875rem;
+$font-size-base: 1rem; $font-size-lg: 1.125rem;
+$font-size-xl: 1.25rem; $font-size-2xl: 1.5rem;
+$font-size-3xl: 2rem; $font-size-4xl: 2.5rem;
+
+// =============================================
+// RESET Y FONDO ANIMADO
+// =============================================
+*,
+*::before,
+*::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-body {
-  font-family: 'Inter', sans-serif;
-  background: linear-gradient(135deg, $color-calm-bg 0%, #e8ecf4 100%);
+html {
+  font-size: 16px;
 }
+
+body {
+  font-family: $font-family-base;
+  font-size: $font-size-base;
+  line-height: 1.6;
+  background: linear-gradient(
+    135deg,
+    $color-deep-calm 0%,
+    #1a1a3e 25%,
+    $color-ocean 50%,
+    #2d2d6b 75%,
+    $color-deep-calm 100%
+  );
+  background-size: 400% 400%;
+  animation: gradient-shift 20s ease infinite;
+  color: $color-text-primary;
+  -webkit-font-smoothing: antialiased;
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+#root {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: $space-4;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+// =============================================
+// HEADER CON EFECTO VIDRIO
+// =============================================
+.app-header {
+  background: $color-glass;
+  backdrop-filter: blur($blur-glass);
+  -webkit-backdrop-filter: blur($blur-glass);
+  border-radius: $border-radius-lg;
+  padding: $space-4 $space-6;
+  margin-bottom: $space-6;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: $shadow-colored;
+
+  .header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: $space-4;
+  }
+
+  .app-title {
+    font-size: $font-size-2xl;
+    font-weight: bold;
+    background: linear-gradient(135deg, $color-cloud, $color-mint);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .anxiety-meter {
+    flex: 1;
+    max-width: 300px;
+
+    &__label {
+      display: flex;
+      justify-content: space-between;
+      font-size: $font-size-xs;
+      color: $color-text-secondary;
+      margin-bottom: $space-1;
+    }
+
+    &__bar-container {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: $border-radius-pill;
+      height: 8px;
+      overflow: hidden;
+    }
+
+    &__bar {
+      height: 100%;
+      border-radius: $border-radius-pill;
+      background: $color-primary;
+      box-shadow: 0 0 10px currentColor;
+      transition: width 0.5s ease;
+    }
+  }
+}
+
+// =============================================
+// ÁREA DE JUEGO CON EFECTO VIDRIO
+// =============================================
+.view-container {
+  flex: 1;
+  background: $color-glass;
+  backdrop-filter: blur($blur-glass);
+  -webkit-backdrop-filter: blur($blur-glass);
+  border-radius: $border-radius-xl;
+  padding: $space-8;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: $shadow-colored;
+}
+
+// =============================================
+// FOOTER CON EFECTO VIDRIO
+// =============================================
+.app-footer {
+  background: $color-glass;
+  backdrop-filter: blur($blur-glass);
+  -webkit-backdrop-filter: blur($blur-glass);
+  border-radius: $border-radius-lg;
+  padding: $space-3 $space-6;
+  margin-top: $space-6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-8;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: $shadow-colored;
+}
+
+.footer-btn {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  padding: $space-3 $space-5;
+  border-radius: $border-radius-pill;
+  font-size: $font-size-sm;
+  font-weight: 500;
+  color: $color-text-secondary;
+  background: $color-surface;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  transition: all $transition-normal;
+
+  &:hover {
+    background: $color-surface-hover;
+    color: $color-cloud;
+    transform: translateY(-3px);
+    box-shadow: $shadow-glow;
+  }
+}
+
+// =============================================
+// BOTONES Y TARJETAS
+// =============================================
+.btn-primary {
+  background: linear-gradient(135deg, $color-ocean, $color-lavender);
+  color: white;
+  padding: $space-4 $space-7;
+  border-radius: $border-radius-pill;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all $transition-normal;
+  box-shadow: 0 4px 15px rgba(30, 58, 138, 0.3);
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    transform: none;
+    box-shadow: none;
+  }
+}
+
+.btn-secondary {
+  background: transparent;
+  color: $color-text-primary;
+  padding: $space-3 $space-6;
+  border-radius: $border-radius-pill;
+  font-weight: 500;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  transition: all $transition-normal;
+  backdrop-filter: blur(4px);
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: $color-lavender;
+    transform: translateY(-2px);
+  }
+}
+
+.welcome-card {
+  text-align: center;
+  max-width: 500px;
+  margin: 0 auto;
+  background: $color-glass;
+  backdrop-filter: blur($blur-glass);
+  border-radius: $border-radius-xl;
+  padding: $space-8;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: $shadow-colored;
+
+  h2 {
+    background: linear-gradient(135deg, $color-cloud, $color-mint);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: $space-3;
+  }
+
+  p {
+    color: $color-text-secondary;
+  }
+}
+
+.emojis-scale {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: $space-3;
+  margin: $space-6 0;
+}
+
+.emotion-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: $space-3;
+  background: $color-surface;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: $border-radius-lg;
+  cursor: pointer;
+  transition: all $transition-normal;
+  min-width: 60px;
+
+  .emotion-emoji { font-size: 2rem; }
+  .emotion-label {
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+    font-weight: 500;
+  }
+
+  &.selected {
+    background: rgba(139, 92, 246, 0.2);
+    border-color: $color-lavender;
+    box-shadow: $shadow-glow;
+  }
+}
+
+.games-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: $space-5;
+  margin: $space-8 0;
+}
+
+.game-card {
+  background: $color-glass;
+  backdrop-filter: blur(8px);
+  border-radius: $border-radius-lg;
+  padding: $space-6;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  transition: all $transition-slow;
+
+  .game-icon { font-size: 3.5rem; margin-bottom: $space-4; }
+  .game-title {
+    font-size: $font-size-xl;
+    font-weight: 600;
+    color: $color-text-primary;
+    margin-bottom: $space-2;
+  }
+  .game-description {
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+  }
+
+  &:hover {
+    transform: translateY(-8px) scale(1.02);
+    background: $color-surface-hover;
+    border-color: rgba(139, 92, 246, 0.3);
+    box-shadow: $shadow-colored, $shadow-glow;
+  }
+}
+
+.text-center { text-align: center; }
