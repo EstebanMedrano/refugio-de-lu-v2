@@ -1,80 +1,147 @@
-.carousel-container {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.carousel-wrap {
   width: 100%;
   max-width: 700px;
-  margin: 2rem auto;
-  overflow: hidden;
+  margin: 1.5rem auto 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  user-select: none;
 }
 
+// ── viewport ────────────────────────────────────────────────────────────────
 .carousel-viewport {
+  position: relative;
+  width: 100%;
+  height: 320px;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
-  height: 350px;
-  position: relative;
+  cursor: grab;
+
+  &:active { cursor: grabbing; }
 }
 
+// ── card base ───────────────────────────────────────────────────────────────
 .carousel-card {
   position: absolute;
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(12px);
   border-radius: 24px;
-  padding: 2rem;
-  text-align: center;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   cursor: pointer;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-  width: 220px;
-  transition: all 0.3s ease;
 
-  h3 {
-    margin-top: 1rem;
+  // accent color viene como CSS var desde el TSX
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--accent) 30%, #1e1b4b),
+    color-mix(in srgb, var(--accent) 10%, #0f172a)
+  );
+
+  &__bg {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  &__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.35;
+    transition: opacity 0.4s;
+  }
+
+  &__body {
+    position: relative;
+    z-index: 1;
+    padding: 1.75rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
+  &__title {
     color: #f8fafc;
     font-size: 1.2rem;
+    font-weight: 700;
+    margin: 0 0 0.35rem;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  }
+
+  &__desc {
+    color: rgba(248, 250, 252, 0.65);
+    font-size: 0.85rem;
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  &__cta {
+    display: inline-block;
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
     font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 0.03em;
+    transition: transform 0.2s;
   }
 
-  p {
-    color: rgba(248, 250, 252, 0.7);
-    font-size: 0.9rem;
-  }
-
-  &.center {
+  // ── posiciones ─────────────────────────────────────────────────────────────
+  &--center {
     width: 260px;
-    padding: 2.5rem;
-    border-color: rgba(139, 92, 246, 0.3);
-    box-shadow: 0 0 30px rgba(139, 92, 246, 0.2);
+    height: 280px;
+    z-index: 3;
+    transform: translateX(0) scale(1);
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--accent) 50%, transparent),
+      0 20px 60px rgba(0, 0, 0, 0.5),
+      0 0 40px color-mix(in srgb, var(--accent) 25%, transparent);
+
+    .carousel-card__img { opacity: 0.5; }
+
+    &:hover .carousel-card__cta { transform: translateX(4px); }
+  }
+
+  &--left {
+    width: 200px;
+    height: 220px;
+    z-index: 2;
+    transform: translateX(-180px) scale(0.88);
+    opacity: 0.6;
+    pointer-events: auto;
+  }
+
+  &--right {
+    width: 200px;
+    height: 220px;
+    z-index: 2;
+    transform: translateX(180px) scale(0.88);
+    opacity: 0.6;
+    pointer-events: auto;
   }
 }
 
-.carousel-btn {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: white;
-  font-size: 3rem;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
+// ── dots ────────────────────────────────────────────────────────────────────
+.carousel-dots {
   display: flex;
-  align-items: center;
+  gap: 8px;
   justify-content: center;
+}
+
+.carousel-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.2);
   cursor: pointer;
-  transition: all 0.3s;
-  z-index: 10;
-  backdrop-filter: blur(10px);
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
+  padding: 0;
+  transition: all 0.3s ease;
 
-  &:hover {
-    background: rgba(139, 92, 246, 0.3);
-    border-color: rgba(139, 92, 246, 0.5);
+  &--active {
+    width: 24px;
+    border-radius: 999px;
+    background: #8b5cf6;
   }
-
-  &-left { left: 10px; }
-  &-right { right: 10px; }
 }

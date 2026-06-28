@@ -2,9 +2,19 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
 
 const ReverseText = lazy(() => import('../games/ReverseText/ReverseText'));
+const Breathing   = lazy(() => import('../games/Breathing/Breathing'));
+const Grounding = lazy(() => import('../games/Grounding/Grounding'));
+const Memorama = lazy(() => import('../games/Memorama/Memorama'));
+const Hurricane = lazy(() => import('../games/Hurricane/Hurricane'));
+const WaterCalm = lazy(() => import('../games/WaterCalm/WaterCalm'));
 
 const gameComponents: Record<string, React.LazyExoticComponent<React.ComponentType<any>>> = {
-  reverse: ReverseText,
+  reverse:   ReverseText,
+  breathing: Breathing,
+  grounding: Grounding,
+  memory: Memorama,
+  hurricane: Hurricane,
+  water: WaterCalm,
 };
 
 export default function GameView() {

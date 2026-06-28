@@ -1,0 +1,257 @@
+@use '../../../styles/variables' as *;
+
+.grounding {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 20px;
+
+  &__title {
+    background: linear-gradient(135deg, #10b981, #8b5cf6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  // ── indicadores de paso ──────────────────────────────────────────────────
+  &__steps-row {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin: 20px 0;
+  }
+
+  &__step-dot {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 8px 10px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    transition: all 0.3s ease;
+    min-width: 52px;
+
+    &--active {
+      background: color-mix(in srgb, var(--dot-color) 20%, transparent);
+      border-color: var(--dot-color);
+      box-shadow: 0 0 12px color-mix(in srgb, var(--dot-color) 30%, transparent);
+    }
+
+    &--done {
+      background: color-mix(in srgb, var(--dot-color) 15%, transparent);
+      border-color: color-mix(in srgb, var(--dot-color) 50%, transparent);
+    }
+
+    &-icon { font-size: 1.2rem; }
+    &-num  { font-size: 0.75rem; color: rgba(248,250,252,0.5); }
+
+    &-check {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      background: #10b981;
+      color: white;
+      border-radius: 50%;
+      width: 16px;
+      height: 16px;
+      font-size: 0.6rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  // ── barra total ──────────────────────────────────────────────────────────
+  &__total-bar {
+    height: 6px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+
+  &__total-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #10b981, #8b5cf6);
+    border-radius: 999px;
+  }
+
+  // ── card del paso ────────────────────────────────────────────────────────
+  &__step-card {
+    background: color-mix(in srgb, var(--accent) 8%, rgba(255,255,255,0.04));
+    border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+    border-radius: 20px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+
+  &__step-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+
+  &__step-icon { font-size: 2rem; line-height: 1; }
+
+  &__step-label {
+    color: #f8fafc;
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 0 0 4px;
+  }
+
+  &__step-desc {
+    color: rgba(248,250,252,0.55);
+    font-size: 0.85rem;
+    margin: 0;
+  }
+
+  &__step-counter {
+    margin-left: auto;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+
+  // ── barra del paso ───────────────────────────────────────────────────────
+  &__step-bar {
+    height: 4px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+
+  &__step-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 999px;
+  }
+
+  // ── pills ────────────────────────────────────────────────────────────────
+  &__pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    min-height: 36px;
+    margin-bottom: 16px;
+  }
+
+  &__pill {
+    background: color-mix(in srgb, var(--accent) 15%, rgba(255,255,255,0.05));
+    border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-size: 0.85rem;
+    color: #f8fafc;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  // ── input ────────────────────────────────────────────────────────────────
+  &__input-row {
+    display: flex;
+    gap: 10px;
+  }
+
+  &__input {
+    flex: 1;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 999px;
+    padding: 12px 18px;
+    color: #f8fafc;
+    font-size: 0.95rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+
+    &:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 16px color-mix(in srgb, var(--accent) 25%, transparent);
+    }
+
+    &::placeholder { color: rgba(248,250,252,0.35); }
+  }
+
+  &__add-btn {
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 999px;
+    padding: 12px 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.2s;
+    white-space: nowrap;
+
+    &:hover:not(:disabled) { opacity: 0.85; transform: scale(1.04); }
+    &:disabled { opacity: 0.35; cursor: not-allowed; }
+  }
+
+  // ── paso completado ──────────────────────────────────────────────────────
+  &__step-done {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 8px 0;
+    color: #10b981;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+
+  &__feedback {
+    text-align: center;
+    color: rgba(248,250,252,0.5);
+    font-size: 0.85rem;
+    margin-top: 8px;
+  }
+
+  // ── pantalla final ───────────────────────────────────────────────────────
+  &__completion {
+    text-align: center;
+    padding: 20px;
+
+    &-star {
+      font-size: 4rem;
+      margin-bottom: 16px;
+    }
+
+    h3 { color: #f8fafc; font-size: 1.8rem; margin-bottom: 8px; }
+    p  { color: rgba(248,250,252,0.6); margin-bottom: 24px; }
+  }
+
+  &__summary {
+    background: rgba(255,255,255,0.04);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  &__summary-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.9rem;
+    color: rgba(248,250,252,0.7);
+  }
+
+  &__summary-check { margin-left: auto; color: #10b981; font-weight: 700; }
+
+  &__finish-btn { width: 100%; }
+
+  // ── volver ───────────────────────────────────────────────────────────────
+  &__back {
+    display: flex;
+    justify-content: center;
+  }
+}

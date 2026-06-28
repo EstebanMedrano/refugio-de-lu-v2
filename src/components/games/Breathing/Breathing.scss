@@ -1,0 +1,75 @@
+@use '../../../styles/variables' as *;
+
+.breathing-game {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 20px;
+  text-align: center;
+
+  &__title {
+    background: linear-gradient(135deg, #10b981, #8b5cf6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  &__subtitle {
+    color: rgba(248, 250, 252, 0.6);
+    margin-bottom: 24px;
+    font-size: 0.95rem;
+  }
+
+  &__canvas-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 24px;
+  }
+
+  &__canvas {
+    border-radius: 50%;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+  }
+
+  &__info {
+    margin-bottom: 24px;
+  }
+
+  &__phase {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #f8fafc;
+    min-height: 2.5rem;
+  }
+
+  &__timer {
+    font-size: 1.25rem;
+    color: rgba(248, 250, 252, 0.7);
+    margin: 4px 0;
+  }
+
+  &__cycle {
+    font-size: 0.9rem;
+    color: rgba(248, 250, 252, 0.45);
+    margin-top: 6px;
+  }
+
+  &__controls {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+
+    .btn-pause {
+      background: #6c7a89;
+    }
+
+    .btn-reset {
+      background: #95a5a6;
+    }
+  }
+
+  &__back {
+    margin-top: 8px;
+  }
+}

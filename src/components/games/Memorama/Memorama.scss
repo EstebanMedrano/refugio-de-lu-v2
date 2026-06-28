@@ -1,0 +1,274 @@
+// Memorama.scss — Estilos para el juego de memorama
+// Usa variables globales del proyecto: @use '../../../styles/variables' as *
+
+@use '../../../styles/variables' as *;
+
+// ─── Perspectiva para el 3D flip ────────────────────────────────────────────
+$card-size: clamp(3.8rem, 10vw, 5.5rem);
+$flip-perspective: 800px;
+
+// ─── Contenedor raíz ────────────────────────────────────────────────────────
+.memorama {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1rem 0.5rem 2rem;
+  min-height: 100%;
+}
+
+// ─── Header ─────────────────────────────────────────────────────────────────
+.memorama__header {
+  text-align: center;
+}
+
+.memorama__title {
+  font-size: clamp(1.2rem, 4vw, 1.6rem);
+  font-weight: 700;
+  margin-bottom: 0.3rem;
+}
+
+.memorama__title-gradient {
+  background: linear-gradient(135deg, #f59e0b, #8b5cf6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.memorama__subtitle {
+  color: #94a3b8;
+  font-size: 0.9rem;
+}
+
+// ─── Stats ──────────────────────────────────────────────────────────────────
+.memorama__stats {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.memorama__stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.75rem;
+  padding: 0.5rem 1rem;
+  min-width: 5rem;
+}
+
+.memorama__stat-icon {
+  font-size: 1.1rem;
+}
+
+.memorama__stat-label {
+  font-size: 0.65rem;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.memorama__stat-value {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+// ─── Hint ───────────────────────────────────────────────────────────────────
+.memorama__hint {
+  font-size: 0.9rem;
+  color: #a78bfa;
+  font-style: italic;
+  text-align: center;
+  height: 1.4rem; // reserva espacio para evitar layout shift
+}
+
+// ─── Grid 4×4 ───────────────────────────────────────────────────────────────
+.memorama__grid {
+  display: grid;
+  grid-template-columns: repeat(4, $card-size);
+  grid-template-rows: repeat(4, $card-size);
+  gap: clamp(0.4rem, 1.5vw, 0.7rem);
+  perspective: $flip-perspective; // habilita la profundidad 3D del padre
+}
+
+// ─── Carta (contenedor externo con perspectiva) ──────────────────────────────
+.memorama__card {
+  position: relative;
+  width: $card-size;
+  height: $card-size;
+  cursor: pointer;
+  border-radius: 0.6rem;
+  perspective: $flip-perspective;
+  user-select: none;
+
+  // Sombra sutil en cartas ocultas
+  &--hidden .memorama__card-inner {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  }
+
+  // Glow al hacer match
+  &--matched .memorama__card-inner {
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.6);
+  }
+
+  // No permitir clic en matched
+  &--matched {
+    cursor: default;
+    pointer-events: none;
+  }
+}
+
+// ─── Carta interna (la que rota) ─────────────────────────────────────────────
+.memorama__card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 0.6rem;
+  // backface-visibility ya lo maneja Framer Motion con rotateY
+  // pero necesitamos que los hijos respeten el 3D
+  transform-style: preserve-3d;
+}
+
+// ─── Cara frontal y trasera ───────────────────────────────────────────────────
+.memorama__card-front,
+.memorama__card-back {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.6rem;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+// Cara frontal: gradiente oscuro con signo de pregunta
+.memorama__card-front {
+  background: linear-gradient(135deg, #1e293b, #0f172a);
+  border: 1px solid rgba(139, 92, 246, 0.25);
+}
+
+.memorama__card-question {
+  font-size: clamp(1.2rem, 3.5vw, 1.8rem);
+  opacity: 0.7;
+}
+
+// Cara trasera: emoji visible — rotada 180° para coincidir con el flip
+.memorama__card-back {
+  background: linear-gradient(135deg, #312e81, #1e1b4b);
+  border: 1px solid rgba(139, 92, 246, 0.5);
+  transform: rotateY(180deg); // empieza "al revés" para el efecto de flip
+}
+
+.memorama__card-emoji {
+  font-size: clamp(1.4rem, 4vw, 2.2rem);
+}
+
+// ─── Glow de match (overlay absoluto) ────────────────────────────────────────
+.memorama__card-glow {
+  position: absolute;
+  inset: -4px;
+  border-radius: 0.9rem;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.6), transparent 70%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+// ─── Botones ─────────────────────────────────────────────────────────────────
+.memorama__actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+
+// ─── Overlay de victoria ─────────────────────────────────────────────────────
+.memorama__victory {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  backdrop-filter: blur(4px);
+}
+
+.memorama__victory-card {
+  background: linear-gradient(160deg, #1e293b, #0f172a);
+  border: 1px solid rgba(139, 92, 246, 0.4);
+  border-radius: 1.25rem;
+  padding: 2.5rem 2rem;
+  text-align: center;
+  max-width: 22rem;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(139, 92, 246, 0.15);
+}
+
+.memorama__victory-emoji {
+  font-size: 3.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.memorama__victory-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #f8fafc;
+  margin-bottom: 0.6rem;
+}
+
+.memorama__victory-desc {
+  color: #94a3b8;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+
+  strong {
+    color: #a78bfa;
+    font-weight: 600;
+  }
+}
+
+.memorama__victory-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+
+  .btn-primary {
+    background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+    color: white;
+    border: none;
+    border-radius: 0.6rem;
+    padding: 0.65rem 1.5rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+
+    &:hover {
+      opacity: 0.9;
+    }
+  }
+}
+
+// ─── Responsive ──────────────────────────────────────────────────────────────
+@media (min-width: 480px) {
+  .memorama__grid {
+    gap: 0.6rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .memorama {
+    padding: 1.5rem 1rem 2rem;
+  }
+
+  .memorama__victory-actions {
+    flex-direction: row;
+    justify-content: center;
+  }
+}
