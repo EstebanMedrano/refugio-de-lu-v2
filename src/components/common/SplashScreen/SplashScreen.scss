@@ -1,0 +1,44 @@
+@use '../../../styles/variables' as *;
+
+.splash-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #000;
+
+  canvas {
+    position: absolute;
+    inset: 0;
+  }
+
+  &__bar-wrap {
+    position: absolute;
+    bottom: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 320px;
+    text-align: center;
+    z-index: 10;
+  }
+
+  &__bar {
+    width: 300px;
+    height: 12px;
+    margin: 0 auto;
+    background: #222;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  &__bar-fill {
+    height: 100%;
+    background: #10b981;
+    border-radius: 6px;
+    transition: width 0.1s linear;
+  }
+
+  &__percent {
+    margin-top: 10px;
+    color: #fff;
+  }
+}

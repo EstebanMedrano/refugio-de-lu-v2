@@ -19,12 +19,12 @@ const games = [
   { id: 'grounding', 
     title: 'Grounding 5-4-3-2-1', 
     desc: 'Vuelve al presente', 
-    accentColor: '#10b981' 
+    accentColor: '#9ab910' 
   },
   { id: 'memory', 
     title: 'Memorama Calmante', 
     desc: 'Encuentra los pares, calma tu mente', 
-    accentColor: '#a78bfa' 
+    accentColor: '#9575f3' 
   },
   { id: 'hurricane', 
     title: 'Huracán de Pensamientos', 
@@ -34,7 +34,17 @@ const games = [
   { id: 'water', 
     title: 'Lago de Calma', 
     desc: 'Crea ondas y escapa de los perritos', 
-    accentColor: '#3b82f6' 
+    accentColor: '#03378b' 
+  },
+  { id: 'ritual', 
+    title: 'Ritual de Soltar', 
+    desc: 'Escribe, suelta, quema', 
+    accentColor: '#f59e0b' 
+  },
+  { id: 'puzzle', 
+    title: 'Rompecabezas', 
+    desc: 'Reconstruye el refugio en 3D', 
+    accentColor: '#f54d0b' 
   },
 ];
 

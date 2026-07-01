@@ -7,6 +7,8 @@ const Grounding = lazy(() => import('../games/Grounding/Grounding'));
 const Memorama = lazy(() => import('../games/Memorama/Memorama'));
 const Hurricane = lazy(() => import('../games/Hurricane/Hurricane'));
 const WaterCalm = lazy(() => import('../games/WaterCalm/WaterCalm'));
+const RitualFire = lazy(() => import('../games/RitualFire/RitualFire'));
+const Puzzle = lazy(() => import('../games/Puzzle/Puzzle'));
 
 const gameComponents: Record<string, React.LazyExoticComponent<React.ComponentType<any>>> = {
   reverse:   ReverseText,
@@ -15,6 +17,8 @@ const gameComponents: Record<string, React.LazyExoticComponent<React.ComponentTy
   memory: Memorama,
   hurricane: Hurricane,
   water: WaterCalm,
+  ritual: RitualFire,
+  puzzle: Puzzle,
 };
 
 export default function GameView() {

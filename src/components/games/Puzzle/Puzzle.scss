@@ -1,0 +1,191 @@
+@use '../../../styles/variables' as *;
+
+.puzzle {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #1a0a04;
+  overflow: hidden;
+
+  &__canvas-wrap {
+    width: 100%;
+    height: 100%;
+    height: 100dvh;
+    position: relative;
+  }
+
+  // ── Top bar overlay ────────────────────────────────────────────────────
+  &__topbar {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, transparent 100%);
+    z-index: 10;
+    pointer-events: auto;
+  }
+
+  &__back-btn {
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 999px;
+    color: #f8fafc;
+    padding: 8px 16px;
+    font-size: 0.82rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.2s;
+    flex-shrink: 0;
+    pointer-events: auto;
+    &:hover { background: rgba(255,255,255,0.18); }
+    @media (max-width: 480px) { padding: 6px 10px; font-size: 0.75rem; }
+  }
+
+  &__title-block { flex: 1; min-width: 0; }
+
+  &__gradient {
+    background: linear-gradient(135deg, #f59e0b, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  &__title {
+    color: #f8fafc;
+    font-size: 1rem;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    @media (max-width: 480px) { font-size: 0.85rem; }
+  }
+
+  &__subtitle {
+    color: rgba(248,250,252,0.6);
+    font-size: 0.78rem;
+    margin: 2px 0 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    @media (max-width: 480px) { font-size: 0.7rem; }
+  }
+
+  // ── Dog selector ───────────────────────────────────────────────────────
+  &__dog-select {
+    position: absolute;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    z-index: 10;
+    pointer-events: auto;
+  }
+
+  &__dog-select-label {
+    color: rgba(255,255,255,0.7);
+    font-size: 0.88rem;
+    margin: 0 0 12px;
+  }
+
+  &__dog-btns {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  &__call-btn {
+    border: none;
+    border-radius: 999px;
+    padding: 14px 28px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+    min-height: 48px; // mobile touch target
+    &:active { transform: scale(0.96); }
+    @media (max-width: 480px) { padding: 12px 20px; font-size: 0.9rem; }
+
+    &--tito { background: linear-gradient(135deg, #f59e0b, #c2580a); }
+    &--lia  { background: linear-gradient(135deg, #cbd5e1, #94a3b8); color: #1e293b; }
+  }
+
+  // ── Hint ───────────────────────────────────────────────────────────────
+  &__hint {
+    position: absolute;
+    bottom: 46px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(248,250,252,0.45);
+    font-size: 0.78rem;
+    text-align: center;
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 5;
+    @media (max-width: 480px) { font-size: 0.7rem; bottom: 40px; }
+  }
+
+  // ── Floating message ───────────────────────────────────────────────────
+  &__msg {
+    position: absolute;
+    bottom: 76px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(12,6,2,0.82);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(245,158,11,0.22);
+    border-radius: 999px;
+    padding: 9px 22px;
+    font-size: 0.88rem;
+    color: #fff3da;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  // ── Progress bar ───────────────────────────────────────────────────────
+  &__progress {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 5px;
+    background: rgba(0,0,0,0.35);
+    z-index: 8;
+  }
+  &__progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #22e07a, #a78bfa);
+  }
+
+  // ── Victory overlay ────────────────────────────────────────────────────
+  &__overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(8,4,2,0.88);
+    backdrop-filter: blur(12px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+  }
+
+  &__victory {
+    background: linear-gradient(135deg, #2a1c10, #14100a);
+    border: 1px solid rgba(245,158,11,0.3);
+    border-radius: 24px;
+    padding: 36px 28px;
+    text-align: center;
+    max-width: 360px;
+    width: 90%;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.6), 0 0 40px rgba(245,158,11,0.12);
+
+    &-emoji { font-size: 3.8rem; margin-bottom: 14px; }
+    h3 { color: #fff3da; font-size: 1.8rem; margin: 0 0 10px; }
+    p { color: rgba(255,243,218,0.65); line-height: 1.6; margin: 0 0 22px; white-space: pre-line; }
+    &-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  }
+}
