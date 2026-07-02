@@ -5,12 +5,30 @@
   inset: 0;
   z-index: 9999;
   background: #000;
+  overflow: hidden;
 
-  canvas {
+  // Capa 1: canvas de ondas (fondo)
+  &__ripple-canvas {
     position: absolute;
     inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
   }
 
+  // Capa 2: canvas Three.js (fondo transparente, Tito encima)
+  &__threejs {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 2;
+    pointer-events: none;
+    // Fade-in suave al aparecer para evitar flash de WebGL
+    animation: splashFadeIn 0.6s ease forwards;
+  }
+
+  // Capa 3: barra HTML
   &__bar-wrap {
     position: absolute;
     bottom: 15%;
@@ -19,26 +37,36 @@
     width: 320px;
     text-align: center;
     z-index: 10;
+    pointer-events: none;
+    animation: splashFadeIn 0.4s ease forwards;
   }
 
   &__bar {
     width: 300px;
     height: 12px;
     margin: 0 auto;
-    background: #222;
+    background: rgba(255, 255, 255, 0.08);
     border-radius: 6px;
     overflow: hidden;
+    border: 1px solid rgba(100, 200, 255, 0.18);
   }
 
   &__bar-fill {
     height: 100%;
-    background: #10b981;
+    background: linear-gradient(90deg, #0ea5e9, #10b981);
     border-radius: 6px;
     transition: width 0.1s linear;
   }
 
   &__percent {
     margin-top: 10px;
-    color: #fff;
+    color: rgba(174, 233, 255, 0.75);
+    font-size: 0.88rem;
+    letter-spacing: 0.04em;
   }
+}
+
+@keyframes splashFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }

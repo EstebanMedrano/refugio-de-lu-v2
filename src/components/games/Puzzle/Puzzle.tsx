@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback, useEffect, Suspense } from 'react';
+import { createPortal } from 'react-dom';
 import { Canvas } from '@react-three/fiber';
 import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -7,7 +8,6 @@ import { useAnxiety } from '../../context/AnxietyContext';
 import { Howl } from 'howler';
 import BedroomScene from './BedroomScene';
 import './Puzzle.scss';
-import { createPortal } from 'react-dom';
 
 export type Phase = 'idle' | 'calling' | 'intro' | 'breaking' | 'puzzle' | 'complete';
 export type DogType = 'tito' | 'lia';
@@ -25,19 +25,50 @@ const TOTAL = 16;
 function subtitleFor(phase: Phase, dog: DogType, placed: number): string {
   const label = dog === 'tito' ? 'Tito 🦊' : 'Lia 🤍';
   switch (phase) {
-    case 'idle':     return '¿A quién llamamos para que rompa el cuadro?';
+    case 'idle':     return '¿A quién llamamos para romper el cuadro?';
     case 'calling':  return `Llamando a ${label}...`;
     case 'intro':    return `¡${label} viene corriendo!`;
     case 'breaking': return `¡${label} rompió el cuadro!`;
-    case 'puzzle':   return `Arrastra las piezas a su lugar · ${placed}/${TOTAL}`;
+    case 'puzzle':   return `Arrastra las piezas · ${placed}/${TOTAL}`;
     case 'complete': return '¡Lo lograste! 🎉';
     default: return '';
   }
 }
 
+// FIX 4: sonido de snap sintetizado (sin Water Drop)
+function useSynthSnap() {
+  const ctxRef = useRef<AudioContext | null>(null);
+
+  const play = useCallback(() => {
+    try {
+      if (!ctxRef.current || ctxRef.current.state === 'closed') {
+        ctxRef.current = new AudioContext();
+      }
+      const ctx = ctxRef.current;
+      if (ctx.state === 'suspended') ctx.resume();
+      const osc  = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(1100, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(340, ctx.currentTime + 0.08);
+      gain.gain.setValueAtTime(0.14, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.1);
+    } catch (e) { /* silencioso */ }
+  }, []);
+
+  useEffect(() => () => { ctxRef.current?.close(); }, []);
+
+  return play;
+}
+
 export default function Puzzle() {
-  const navigate   = useNavigate();
+  const navigate       = useNavigate();
   const { reduceLevel } = useAnxiety();
+  const playSnap       = useSynthSnap();
 
   const puzzlesRef = useRef([...ALL_PUZZLES].sort(() => Math.random() - 0.5).slice(0, 3));
 
@@ -50,12 +81,15 @@ export default function Puzzle() {
   const [completed, setCompleted] = useState(false);
   const [allDone,   setAllDone]   = useState(false);
 
-  const sfx    = useRef<{ snap?: Howl; bark?: Howl; success?: Howl }>({});
+  // FIX 3: phaseRef para handleImpact seguro (evita stale closure)
+  const phaseRef = useRef<Phase>('idle');
+  useEffect(() => { phaseRef.current = phase; }, [phase]);
+
+  const sfx    = useRef<{ bark?: Howl; success?: Howl }>({});
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   useEffect(() => {
     sfx.current = {
-      snap:    new Howl({ src: ['/assets/sounds/water-drop.mp3'],   volume: 0.22 }),
       bark:    new Howl({ src: ['/assets/sounds/lia-bark.mp3'],     volume: 0.32 }),
       success: new Howl({ src: ['/assets/sounds/magia-brillo.mp3'], volume: 0.28 }),
     };
@@ -79,17 +113,32 @@ export default function Puzzle() {
     showMsg(`¡${dog === 'tito' ? 'Tito 🦊' : 'Lia 🤍'}, ven aquí!`, 2000);
   };
 
-  const handleImpact   = useCallback(() => { setPhase('breaking'); sfx.current.bark?.play(); }, []);
+  // FIX 3: handleImpact distingue primera rotura vs re-rotura
+  const handleImpact = useCallback(() => {
+    const p = phaseRef.current;
+    if (p === 'intro') {
+      setPhase('breaking');
+      sfx.current.bark?.play();
+    } else if (p === 'puzzle') {
+      // Re-rotura: resetea piezas y contador
+      setPhase('breaking');
+      setPlaced(0);
+      sfx.current.bark?.play();
+      showMsg('¡Volvió a romperlo! 😅', 2200);
+    }
+    // En cualquier otro estado (complete, etc.) no hace nada
+  }, [showMsg]);
+
   const handleSettled  = useCallback(() => setPhase('puzzle'), []);
 
   const handleSnap = useCallback((count: number) => {
     setPlaced(count);
-    sfx.current.snap?.play();
+    playSnap(); // FIX 4: sin water-drop
     if (count > 0 && count % 4 === 0 && count < TOTAL) {
       const msgs = ['¡Vas increíble! 🌟', '¡Sigue así! 💪', '¡Casi lo tienes! ✨'];
       showMsg(msgs[Math.floor(Math.random() * msgs.length)]);
     }
-  }, [showMsg]);
+  }, [showMsg, playSnap]);
 
   const handleComplete = useCallback(() => {
     reduceLevel();
@@ -105,7 +154,7 @@ export default function Puzzle() {
     setPuzzleIdx(p => p + 1);
   };
 
-  const cur = puzzlesRef.current[puzzleIdx];
+  const cur      = puzzlesRef.current[puzzleIdx];
   const progress = (placed / TOTAL) * 100;
 
   return createPortal(
@@ -132,7 +181,7 @@ export default function Puzzle() {
           </EffectComposer>
         </Canvas>
 
-        {/* ── Top bar ── */}
+        {/* Top bar */}
         <div className="puzzle__topbar">
           <button className="puzzle__back-btn" onClick={() => navigate('/games')}>← Volver</button>
           <div className="puzzle__title-block">
@@ -141,46 +190,35 @@ export default function Puzzle() {
           </div>
         </div>
 
-        {/* ── Dog selector ── */}
+        {/* Selector de perro */}
         <AnimatePresence>
           {phase === 'idle' && (
-            <motion.div
-              className="puzzle__dog-select"
-              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 10 }}
-            >
+            <motion.div className="puzzle__dog-select"
+              initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} exit={{ opacity:0, y:10 }}>
               <p className="puzzle__dog-select-label">¿Quién rompe el cuadro hoy?</p>
               <div className="puzzle__dog-btns">
-                <button className="puzzle__call-btn puzzle__call-btn--tito" onClick={() => callDog('tito')}>
-                  🦊 Llamar a Tito
-                </button>
-                <button className="puzzle__call-btn puzzle__call-btn--lia" onClick={() => callDog('lia')}>
-                  🤍 Llamar a Lia
-                </button>
+                <button className="puzzle__call-btn puzzle__call-btn--tito" onClick={() => callDog('tito')}>🦊 Llamar a Tito</button>
+                <button className="puzzle__call-btn puzzle__call-btn--lia"  onClick={() => callDog('lia')}>🤍 Llamar a Lia</button>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* ── Hint during puzzle ── */}
         {phase === 'puzzle' && (
           <div className="puzzle__hint">
-            Arrastra las piezas de los costados hacia el cuadro · tócalas en celular
+            Arrastra las piezas de los costados hacia el cuadro
           </div>
         )}
 
-        {/* ── Floating message ── */}
         <AnimatePresence>
           {message && (
             <motion.div className="puzzle__msg" key={message}
-              initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-            >
+              initial={{ opacity:0, y:10 }} animate={{ opacity:1, y:0 }} exit={{ opacity:0 }}>
               {message}
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* ── Progress bar (bottom) ── */}
         {phase === 'puzzle' && (
           <div className="puzzle__progress">
             <motion.div className="puzzle__progress-fill"
@@ -189,14 +227,13 @@ export default function Puzzle() {
         )}
       </div>
 
-      {/* ── Victory overlay ── */}
+      {/* Victory overlay */}
       <AnimatePresence>
         {(completed || allDone) && (
-          <motion.div className="puzzle__overlay" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+          <motion.div className="puzzle__overlay" initial={{ opacity:0 }} animate={{ opacity:1 }} exit={{ opacity:0 }}>
             <motion.div className="puzzle__victory"
-              initial={{ scale: 0.5, y: 50 }} animate={{ scale: 1, y: 0 }}
-              transition={{ type: 'spring', stiffness: 200, damping: 18 }}
-            >
+              initial={{ scale:0.5, y:50 }} animate={{ scale:1, y:0 }}
+              transition={{ type:'spring', stiffness:200, damping:18 }}>
               <div className="puzzle__victory-emoji">{allDone ? '🏆' : '🎉'}</div>
               <h3>{allDone ? '¡Increíble!' : '¡Lo lograste!'}</h3>
               <p>{allDone ? 'Completaste todos los rompecabezas.\nEres maravillosa 🌟' : cur.message}</p>

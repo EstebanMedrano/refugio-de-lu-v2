@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Canvas } from '@react-three/fiber';
 import { Howl } from 'howler';
+import RippleCanvas from './RippleCanvas';
 import SplashScene from './SplashScene';
 import './SplashScreen.scss';
 
@@ -14,7 +15,7 @@ export default function SplashScreen({ onFinish }: SplashScreenProps) {
   const [progress, setProgress] = useState(0);
   const hasFinished = useRef(false);
   const revealedRef = useRef(false);
-  const musicSound = useRef<Howl | null>(null);
+  const musicSound  = useRef<Howl | null>(null);
 
   useEffect(() => {
     try {
@@ -23,38 +24,35 @@ export default function SplashScreen({ onFinish }: SplashScreenProps) {
         volume: 0.2,
         loop: true,
       });
+      musicSound.current.play(); // ← suena desde el primer segundo del splash
     } catch {
       console.warn('Sonido no disponible');
     }
   }, []);
 
-  const handleRevealed = () => {
+  const handleRevealed = useCallback(() => {
     if (revealedRef.current) return;
     revealedRef.current = true;
     setStage('revealed');
-  };
-
-  // timeout de seguridad
-  useEffect(() => {
-    const timeout = setTimeout(handleRevealed, 4000);
-    return () => clearTimeout(timeout);
   }, []);
 
-  // barra de progreso
+  useEffect(() => {
+    const timeout = setTimeout(handleRevealed, 5500);
+    return () => clearTimeout(timeout);
+  }, [handleRevealed]);
+
   useEffect(() => {
     if (stage !== 'revealed') return;
-    const totalDuration = 5000;
     const intervalTime = 100;
-    const increment = 100 / (totalDuration / intervalTime);
+    const increment   = 100 / (5000 / intervalTime);
 
     const interval = setInterval(() => {
-      setProgress((prev) => {
+      setProgress(prev => {
         if (prev >= 100) {
           clearInterval(interval);
-          if (musicSound.current && !hasFinished.current) {
-            musicSound.current.play();
+          if (!hasFinished.current) {
             hasFinished.current = true;
-            setTimeout(onFinish, 500);
+            setTimeout(onFinish, 600); // música ya suena, solo cerramos el splash
           }
           return 100;
         }
@@ -67,28 +65,23 @@ export default function SplashScreen({ onFinish }: SplashScreenProps) {
 
   return createPortal(
     <div className="splash-screen">
-      {/* Canvas 3D de fondo */}
-      <Canvas
-        camera={{ position: [0, 1.1, 4.4], fov: 42 }}
-        dpr={[1, 2]}
-        style={{ position: 'absolute', inset: 0 }}
-      >
-        <SplashScene onRevealed={handleRevealed} />
-      </Canvas>
+      <RippleCanvas onRevealed={handleRevealed} />
 
-      {/* Título HTML — fuera del Canvas, sin depender de troika/WASM */}
-      <div className={`splash-screen__title ${stage === 'revealed' ? 'visible' : ''}`}>
-        Espacio de Calma
-      </div>
+      {stage === 'revealed' && (
+        <Canvas
+          className="splash-screen__threejs"
+          camera={{ position: [0, 0, 5], fov: 50 }}
+          gl={{ alpha: true, antialias: true }}
+          dpr={[1, 2]}
+        >
+          <SplashScene />
+        </Canvas>
+      )}
 
-      {/* Barra de carga */}
       {stage === 'revealed' && (
         <div className="splash-screen__bar-wrap">
           <div className="splash-screen__bar">
-            <div
-              className="splash-screen__bar-fill"
-              style={{ width: `${progress}%` }}
-            />
+            <div className="splash-screen__bar-fill" style={{ width: `${progress}%` }} />
           </div>
           <p className="splash-screen__percent">{Math.floor(progress)}%</p>
         </div>

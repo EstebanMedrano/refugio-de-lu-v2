@@ -3,130 +3,159 @@
 .ritual-fire-container {
   position: fixed;
   inset: 0;
-  width: 100vw;
-  height: 100vh;
-  height: 100dvh;
-  z-index: 9999;
-  background: #04060c;
+  z-index: 1000;
+  background: #16284d;
   overflow: hidden;
+}
 
-  .ritual-canvas {
-    width: 100%;
-    height: 100%;
-    display: block;
-    cursor: default;
-    touch-action: none;
+.ritual-back-btn {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  z-index: 10;
+}
+
+.ritual-canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
+.ritual-capture-input {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  z-index: 20;
+  width: 300px;
+  height: 140px;
+  padding: 12px;
+  background: rgba(12, 20, 36, 0.65);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  color: #f3ead9;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  resize: none;
+  outline: none;
+
+  &:focus { border-color: rgba(255, 255, 255, 0.3); }
+}
+
+.ritual-finish-btn {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  background: linear-gradient(145deg, #2a4a7a, #1d3560);
+  border: none;
+  color: #f3ead9;
+  padding: 12px 32px;
+  border-radius: 999px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 0 0 20px rgba(100, 180, 255, 0.15);
+  transition: transform 0.2s;
+
+  &:hover { transform: translateX(-50%) scale(1.05); }
+  &:disabled { opacity: 0.4; transform: translateX(-50%) scale(1); cursor: default; }
+}
+
+.ritual-hotspot {
+  position: fixed;
+  z-index: 10;
+  padding: 14px 28px;
+  background: rgba(12, 20, 36, 0.55);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  color: #f3ead9;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+
+  &:hover { transform: scale(1.03); border-color: rgba(255, 255, 255, 0.2); }
+  &:active { transform: scale(0.95); }
+
+  &--right {
+    bottom: 28px;
+    right: 28px;
+    background: rgba(34, 80, 140, 0.6);
+    border-color: rgba(100, 180, 255, 0.2);
+    &:hover { border-color: rgba(100, 180, 255, 0.4); }
   }
-
-  .ritual-back-btn {
-    position: absolute;
-    top: max(16px, env(safe-area-inset-top));
-    left: 16px;
-    z-index: 20;
-    padding: 9px 16px;
-    border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    background: rgba(10, 14, 24, 0.55);
-    color: #f1f5f9;
-    font-size: 0.85rem;
-    cursor: pointer;
-    backdrop-filter: blur(6px);
-
-    &:hover { background: rgba(10, 14, 24, 0.8); }
-
-    @media (max-width: 480px) {
-      font-size: 0.78rem;
-      padding: 7px 13px;
-    }
-  }
-
-  .ritual-hotspot {
-    position: absolute;
-    bottom: max(8%, env(safe-area-inset-bottom));
-    z-index: 15;
-    padding: 11px 18px;
-    border-radius: 999px;
-    font-size: 0.95rem;
-    cursor: pointer;
-    backdrop-filter: blur(6px);
-    border: 1px solid rgba(245, 200, 140, 0.45);
-    background: rgba(122, 60, 10, 0.35);
-    color: #fde9c8;
-    animation: ritualPulse 2.6s ease-in-out infinite;
-
-    &:hover { background: rgba(122, 60, 10, 0.55); }
-    &--right { right: 5%; }
-    &--left { left: 5%; }
-
-    &--burn {
-      border-color: rgba(239, 68, 68, 0.5);
-      background: rgba(239, 68, 68, 0.25);
-      &:hover { background: rgba(239, 68, 68, 0.4); }
-    }
-
-    @media (max-width: 480px) {
-      font-size: 0.8rem;
-      padding: 9px 14px;
-      bottom: 6%;
-    }
-    &--center {
-        left: 50%;
-        transform: translateX(-50%);
-        bottom: max(8%, env(safe-area-inset-bottom));
-        background: rgba(30, 50, 20, 0.35);
-        border-color: rgba(180, 220, 100, 0.4);
-        color: #e8f5d0;
-
-        &:hover { background: rgba(30, 50, 20, 0.55); }
-        &:disabled { opacity: 0.35; cursor: default; animation: none; }
-
-        @media (max-width: 480px) { font-size: 0.76rem; padding: 7px 11px; }
-    }
-  }
-
-  .ritual-capture-input {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 10;
-    opacity: 0;
-    border: none;
-    resize: none;
-    background: transparent;
-    color: transparent;
-    caret-color: transparent;
-
-    &:focus { outline: none; }
-  }
-
-  .ritual-finish-btn {
-    position: absolute;
-    bottom: max(7%, env(safe-area-inset-bottom));
+  &--center {
+    bottom: 28px;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 20;
-    padding: 11px 22px;
-    border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    background: rgba(20, 16, 10, 0.55);
-    color: #f3ead9;
-    font-size: 0.95rem;
-    cursor: pointer;
-    backdrop-filter: blur(6px);
-
-    &:hover:not(:disabled) { background: rgba(20, 16, 10, 0.8); }
-    &:disabled { opacity: 0.4; cursor: default; }
-
-    @media (max-width: 480px) {
-      font-size: 0.82rem;
-      padding: 9px 16px;
-      bottom: 5%;
-    }
+    background: rgba(60, 50, 30, 0.6);
+    border-color: rgba(255, 220, 120, 0.2);
+    &:hover { transform: translateX(-50%) scale(1.03); border-color: rgba(255, 220, 120, 0.4); }
+  }
+  &--left {
+    bottom: 28px;
+    left: 28px;
+    background: rgba(120, 40, 20, 0.5);
+    border-color: rgba(255, 100, 60, 0.2);
+    &:hover { border-color: rgba(255, 100, 60, 0.4); }
+  }
+  &--burn {
+    background: rgba(150, 50, 0, 0.6);
   }
 }
 
-@keyframes ritualPulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(245, 200, 140, 0.35); }
-  50% { box-shadow: 0 0 0 10px rgba(245, 200, 140, 0); }
+// ── Overlay de apuntado (NUEVO) ──────────────────────────────────────────────
+
+.ritual-aim-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+}
+
+.ritual-crosshair {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px; height: 40px;
+  border: 2px solid rgba(255, 255, 255, 0.75);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: crosshairPulse 1.4s ease-in-out infinite;
+
+  &::before, &::after {
+    content: '';
+    position: absolute;
+    background: rgba(255, 255, 255, 0.75);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  &::before { width: 2px; height: 16px; }
+  &::after  { width: 16px; height: 2px; }
+}
+
+@keyframes crosshairPulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1);   opacity: 1; }
+  50%       { transform: translate(-50%, -50%) scale(1.15); opacity: 0.7; }
+}
+
+.ritual-aim-hint {
+  position: absolute;
+  bottom: max(9%, env(safe-area-inset-bottom));
+  left: 50%; transform: translateX(-50%);
+  white-space: nowrap;
+  background: rgba(10, 14, 24, 0.65);
+  color: #f3ead9;
+  padding: 10px 22px;
+  border-radius: 999px;
+  backdrop-filter: blur(6px);
+  font-size: 0.95rem;
+  pointer-events: none;
+
+  @media (max-width: 480px) { font-size: 0.82rem; padding: 8px 16px; }
 }

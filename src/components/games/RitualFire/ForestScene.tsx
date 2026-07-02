@@ -82,7 +82,7 @@ function LettersOnDesk({ count = 3 }: { count?: number }) {
 }
 
 export default function ForestScene({ lettersOnDesk = 3 }: { lettersOnDesk?: number }) {
-  const trees = useMemo(() => generateTrees(30, 4, 9), []);
+  const trees = useMemo(() => generateTrees(50, 4, 13), []);
 
   return (
     <group>

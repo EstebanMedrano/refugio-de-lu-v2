@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react';
-import { useThree } from '@react-three/fiber'; // Eliminamos useFrame
+import { useRef, useEffect } from 'react'; // <--- ¡AÑADIDO useEffect!
+import { useFrame, useThree } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 
@@ -15,7 +15,17 @@ export default function Arms() {
     return () => { camera.remove(g); };
   }, [camera]);
 
-  // ⚠️ Ajusta position, rotation y scale según tu GLB específico
+  // Movimiento de balanceo natural (como si el personaje respirara)
+  useFrame(({ clock }) => {
+    if (!groupRef.current) return;
+    const t = clock.getElapsedTime();
+    const breathe = Math.sin(t * 1.2) * 0.015; 
+    const sway = Math.sin(t * 0.6) * 0.008;
+    groupRef.current.position.y = -0.36 + breathe;
+    groupRef.current.position.x = sway;
+  });
+
+  // ⚠️ Ajusta position, rotation y scale si tu GLB lo requiere
   return (
     <group ref={groupRef} position={[0, -0.36, -0.42]} rotation={[0, Math.PI, 0]}>
       <primitive object={scene} scale={0.18} />

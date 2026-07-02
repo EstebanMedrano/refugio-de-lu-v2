@@ -4,13 +4,13 @@ import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 import type { Phase } from './Puzzle';
 
+// FIX 1: puzzle camera centrada en el cuadro
 const FIXED: Partial<Record<Phase, { pos: THREE.Vector3; look: THREE.Vector3 }>> = {
   idle:     { pos: new THREE.Vector3(0, 1.6, 4.6),    look: new THREE.Vector3(0, 1.4, -1) },
   calling:  { pos: new THREE.Vector3(3.6, 1.8, 2.5),  look: new THREE.Vector3(4.3, 0.4, 0.8) },
-  // intro: dynamic (follows dog)
-  breaking: { pos: new THREE.Vector3(0.3, 1.65, -1.4),  look: new THREE.Vector3(0, 1.58, -4.45) },
-  puzzle:   { pos: new THREE.Vector3(2.6, 1.95, 0.5),   look: new THREE.Vector3(0.5, 1.3, -3.9) },
-  complete: { pos: new THREE.Vector3(0.6, 1.75, -0.8),  look: new THREE.Vector3(0, 1.5, -4.45) },
+  breaking: { pos: new THREE.Vector3(0, 1.68, -1.2),  look: new THREE.Vector3(0, 1.58, -4.45) },
+  puzzle:   { pos: new THREE.Vector3(0, 1.75, 0.9),   look: new THREE.Vector3(0, 1.58, -4.45) },
+  complete: { pos: new THREE.Vector3(0, 1.72, -0.8),  look: new THREE.Vector3(0, 1.58, -4.45) },
 };
 
 interface Props {
@@ -23,16 +23,14 @@ export default function CameraRig({ phase, dogPosRef }: Props) {
   const lookTarget = useRef(new THREE.Vector3(0, 1.4, -1));
 
   useFrame((_, dt) => {
-    // idle handled by OrbitControls below
     if (phase === 'idle') return;
 
     if (phase === 'intro') {
-      // Follow dog from third-person perspective
       const dp = dogPosRef.current;
       const targetCamPos = new THREE.Vector3(
-        dp.x * 0.3 - 0.5,  // slightly to the side
-        dp.y + 1.65,         // above
-        dp.z + 2.6           // behind (dog runs toward -z)
+        dp.x * 0.3 - 0.5,
+        dp.y + 1.65,
+        dp.z + 2.6
       );
       const ease = Math.min(0.13, 5 * dt);
       camera.position.lerp(targetCamPos, ease);
@@ -52,7 +50,6 @@ export default function CameraRig({ phase, dogPosRef }: Props) {
     camera.lookAt(lookTarget.current);
   });
 
-  // OrbitControls ONLY in idle phase (no conflict with piece dragging)
   if (phase !== 'idle') return null;
 
   return (

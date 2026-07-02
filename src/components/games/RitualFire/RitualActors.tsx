@@ -2,7 +2,6 @@ import { useEffect, useRef, useMemo } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { Text } from '@react-three/drei';
 import * as THREE from 'three';
-// Importamos solo lo que realmente se usa (RIGHT_STUMP y LAP_REST eliminados)
 import { LEFT_STUMP, STUMP_TOP_Y } from './ForestScene';
 import Arms from './Arms';
 
@@ -21,7 +20,6 @@ interface RitualActorsProps {
   burnThrow:    boolean;
 }
 
-// ─── Carta sostenida en cámara-local ─────────────────────────────────────────
 interface HeldPose { pos: [number,number,number]; scale: number; rot: [number,number,number]; opacity: number; }
 
 const HELD_POSES: Record<RitualStage, HeldPose> = {
@@ -72,25 +70,16 @@ function HeldLetter({ stage, text }: { stage: RitualStage; text: string }) {
 
   return (
     <group ref={groupRef} position={[0.22, -0.4, -0.55]} scale={0.001}>
-      {/* Papel: MeshBasicMaterial → siempre visible en color hueso */}
       <mesh>
         <planeGeometry args={[0.46, 0.62]} />
-        <meshBasicMaterial
-          ref={matRef}
-          color="#f3ead9"
-          transparent
-          opacity={0}
-          side={THREE.DoubleSide}
-        />
+        <meshBasicMaterial ref={matRef} color="#f3ead9" transparent opacity={0} side={THREE.DoubleSide} />
       </mesh>
-      {/* Líneas decorativas del papel */}
       {[0.18, 0.10, 0.02, -0.06, -0.14, -0.22].map((y) => (
         <mesh key={y} position={[0, y, 0.001]}>
           <planeGeometry args={[0.38, 0.006]} />
           <meshBasicMaterial color="#ddd0b8" transparent opacity={0} />
         </mesh>
       ))}
-      {/* Texto 3D real sobre la carta */}
       {showText && (
         <Text
           position={[0, 0.05, 0.002]}
@@ -109,8 +98,6 @@ function HeldLetter({ stage, text }: { stage: RitualStage; text: string }) {
     </group>
   );
 }
-
-// ─── Resto de props ─────────────────────────────────────────────────────────
 
 function PenProp({ target, visible }: { target: THREE.Vector3; visible: boolean }) {
   const ref = useRef<THREE.Group>(null);
@@ -198,20 +185,15 @@ function FlyingLetter({ active }: { active: boolean }) {
   );
 }
 
-// ─── Export principal ─────────────────────────────────────────────────────────
 export default function RitualActors({ stage, letterText, savedLetters, burnThrow }: RitualActorsProps) {
   const stackHidden = ['collectingLetters','returningToBurn','throwing','burningFire'].includes(stage);
   const penVisible  = stage === 'grabbingLetter' || stage === 'returningToSeat';
 
-  // Nueva posición de la pluma (coordenadas fijas en el espacio de la cámara para los nuevos brazos GLB)
   const penCameraPos = useMemo(() => new THREE.Vector3(0.32, -0.28, -0.45), []);
 
   return (
     <group>
-      {/* Componente de brazos GLB (ahora sin props) */}
       <Arms />
-
-      {/* La pluma y la carta van posicionadas en el espacio de la cámara */}
       <PenProp target={penCameraPos} visible={penVisible} />
       <HeldLetter stage={stage} text={letterText} />
       
